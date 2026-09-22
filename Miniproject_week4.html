@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-4.0.0.min.js">
+
+    </script>
+
+
+
+</head>
+<body>
+    <div id="map" style="height:512px;width:512px;border:1px solid grey;padding:5px"></div>
+    <button id="button-left"><</button>
+    <button id="button-right">></button>
+    <br>
+    <p>Start Date: <input type="date" id="date1" value="2026-01-01"></p>
+    <p>End Date: <input type="date" id="date2" value="2026-01-10"></p>
+    <p> Red Shade Number <input type="number" id="r" min="0" max="255" value="200"></p>
+    <p> Blue Shade Number <input type="number" id="b" min="0" max="255" value="200"></p> 
+    <p> Green Shade Number <input type="number" id="g" min="0" max="255" value="200"></p>
+    <button id="update">Update Map!</button>
+
+
+<script>
+let date1='2026-01-01';
+let date2= '2026-01-10';
+let east = -60;
+let west= east +180;
+
+let key='7f16b1564e3ca150a971290321767743';
+
+update_map(east,west,date1,date2);
+
+function update_map(east,west,date1,date2){
+    date1 = $("#date1").val();
+    date2 = $("#date2").val();
+    let r = $("#r").val();
+    let g = $("#g").val();
+    let b = $("#b").val();
+    let colors = `${r}+${g}+${b}`;
+
+    let src = `https://firms.modaps.eosdis.nasa.gov/mapserver/wms/fires/${key}/?REQUEST=GetMap&layers=fires_modis&COLORS=${colors}&TIME=${date1}/${date2}&WIDTH=512&HEIGHT=512&BBOX=${east},-90,${west},90`;
+    console.log(src);
+    $("#map").html(`<img src="${src}"></img>`);
+
+    $("#button-left").click(function(){
+        east -=10;
+        west = east + 180;
+        update_map(east,west,date1,date2);
+        if (east <= -180)
+            this.disabled = true;
+        if($("#button-right").prop('disabled'))
+            $("#button-right").prop('disabled',false)
+        
+
+    })
+    $("#button-right").click(function(){
+        east +=10;
+        west = east + 180;
+        update_map(east,west,date1,date2);
+        if (east >= 0)
+            this.disabled = true;
+        if($("#button-left").prop('disabled'))
+            $("#button-left").prop('disabled',false)
+        
+
+    })
+
+    $("#update").click(function(){
+        update_map(east,west,date1,date2)
+    })
+
+}
+</script>
+
+</body>
+
+
+</html>
